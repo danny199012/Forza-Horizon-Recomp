@@ -112,7 +112,42 @@ Target machine needs only Windows 10/11 x64, recent GPU drivers and the
 (the binaries import `MSVCP140`/`VCRUNTIME140`; everything else is system).
 Saves are created under `Documents\forzahorizon\` automatically.
 
+## Installing DLC
+
+DLC packages (STFS/`LIVE` containers) are supported by the runtime's content
+manager: packs are stored **extracted** in the user-data content tree and
+enumerated/mounted like real installed content.
+
+`tools/stfs_extract.py` installs them from a No-Intro-style DLC dump:
+
+```
+python tools\stfs_extract.py "E:\...\Forza Horizon DLC" "%USERPROFILE%\Documents\forzahorizon"
+```
+
+This walks every `...\4D5309C9\00000002\<id>\<id>` package, parses the STFS
+volume (block hash chains included), extracts the files to
+
+```
+Documents\forzahorizon\0000000000000000\4D5309C9\00000002\<content-id>\
+```
+
+and prints the license mask each package grants (e.g. `0x00000001` =
+purchased, `0x3FFFFFFF` = season-pass packs).
+
+Licensing: the runtime reports a license mask to the game via the
+`license_mask` cvar. To unlock all installed DLC, add to `forzahorizon.toml`
+(top level):
+
+```toml
+license_mask = 4294967295
+```
+
+Restart the game after installing packs. The in-game marketplace/car lists
+then include the packs; expansion packs (1000 Club, Rally) add their content
+to the world.
+
 ## Launcher
+
 
 
 `launcher\` contains a small WPF launcher that is **game-agnostic** —
