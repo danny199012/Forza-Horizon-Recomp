@@ -28,15 +28,21 @@
   Reuse an existing "Forza Horizon" folder in the bundle (fast re-package
   after code changes).
 
+.PARAMETER NoMedia
+  Do not stage game media at all (binaries-only bundle, e.g. for a GitHub
+  release where users supply their own dump).
+
 .EXAMPLE
   powershell -File tools\package_release.ps1
   powershell -File tools\package_release.ps1 -SkipMedia   # after code tweaks
+  powershell -File tools\package_release.ps1 -NoMedia     # binaries-only zip
 #>
 param(
     [string]$Config = 'win-amd64-perf',
     [string]$Output = 'release',
     [switch]$IncludePdb,
-    [switch]$SkipMedia
+    [switch]$SkipMedia,
+    [switch]$NoMedia
 )
 
 $ErrorActionPreference = 'Stop'
@@ -89,7 +95,14 @@ if (-not (Test-Path $launcherExe)) {
 
 Write-Host "== staging game media (robocopy, multithreaded)" -ForegroundColor Cyan
 $mediaDst = Join-Path $bundle 'Forza Horizon'
-if ($SkipMedia -and (Test-Path $mediaDst)) {
+if ($NoMedia) {
+    Write-Host '   skipped (-NoMedia): binaries-only bundle; users add their own dump'
+    @'
+This bundle ships WITHOUT game data. Create a "Forza Horizon" folder next
+to forzahorizon.exe containing your own extracted copy of the game
+(default.xex + media\...). The launcher profile already points at it.
+'@ | Set-Content (Join-Path $bundle 'NO_GAME_DATA.txt') -Encoding UTF8
+} elseif ($SkipMedia -and (Test-Path $mediaDst)) {
     Write-Host '   skipped (-SkipMedia), media already staged'
 } else {
     robocopy (Join-Path $project 'Forza Horizon') $mediaDst /MIR /MT:16 /NFL /NDL /NJH /NP | Out-Null
