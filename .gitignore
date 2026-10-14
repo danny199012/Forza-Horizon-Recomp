@@ -12,6 +12,7 @@ rexglue/
 out/
 logs/
 *.log
+release/
 
 # ---- Launcher build outputs ----
 launcher/publish/

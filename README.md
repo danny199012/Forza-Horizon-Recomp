@@ -88,7 +88,32 @@ play.cmd                  rem launch
 First build compiles many large translation units (be patient); after that
 incremental relinks are quick. Logs land in `out\build\<config>\logs\`.
 
+## Packaging a release bundle
+
+`tools/package_release.ps1` assembles everything needed to run the game on
+another Windows PC (e.g. a handheld):
+
+```
+powershell -ExecutionPolicy Bypass -File tools\package_release.ps1
+powershell -ExecutionPolicy Bypass -File tools\package_release.ps1 -SkipMedia   # re-package after code tweaks only
+powershell -ExecutionPolicy Bypass -File tools\package_release.ps1 -IncludePdb  # + crash symbols
+```
+
+produces `release\ForzaHorizonRecomp\` (~7 GB, mostly the game media):
+
+- `forzahorizon.exe` + `forzahorizon.toml` + the runtime DLLs
+  (`rexruntime`, `rexgpu-xenos`, facade DLLs, Tracy)
+- `Forza Horizon\` — the game media tree
+- `RecompLauncher.exe` + `launcher.json` + `banner.png`
+- `README.txt` — quickstart for the target machine
+
+Target machine needs only Windows 10/11 x64, recent GPU drivers and the
+[VC++ 2015-2022 x64 redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+(the binaries import `MSVCP140`/`VCRUNTIME140`; everything else is system).
+Saves are created under `Documents\forzahorizon\` automatically.
+
 ## Launcher
+
 
 `launcher\` contains a small WPF launcher that is **game-agnostic** —
 everything game-specific lives in `launcher.json` next to it. The Forza
