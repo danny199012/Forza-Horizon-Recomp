@@ -1,0 +1,29 @@
+# ---- Game-derived content: NEVER commit (copyright) ----
+# Extracted game media / dump
+Forza Horizon/
+# Decrypted game executable + dump artifacts
+tools/xexdump/
+# Recompiled game code (generated from YOUR dump)
+generated/
+# SDK install used by build.cmd (binaries)
+rexglue/
+
+# ---- Build outputs ----
+out/
+logs/
+*.log
+
+# ---- Launcher build outputs ----
+launcher/publish/
+launcher/src/RecompLauncher/bin/
+launcher/src/RecompLauncher/obj/
+launcher/mods/
+
+# ---- Python scratch ----
+__pycache__/
+*.pyc
+
+# ---- Editor / OS ----
+.vs/
+.vscode/
+Thumbs.db
